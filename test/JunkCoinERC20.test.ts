@@ -5,11 +5,13 @@ import {BigNumber} from "ethers";
 
 describe('JunkCoinERC20', () => {
     beforeEach(async () => {
+        // @ts-ignore
         await hre.deployments.fixture();
     })
 
     const getContracts = async () => {
         const { deployer, tester1, tester2 } = await hre.getNamedAccounts();
+        // @ts-ignore
         const JunkCoinERC20 = await hre.ethers.getContract('JunkCoinERC20', deployer);
 
         return { JunkCoinERC20, deployer, tester1, tester2 };
@@ -30,6 +32,7 @@ describe('JunkCoinERC20', () => {
 
     it('TransferFrom', async () => {
         const { JunkCoinERC20, deployer, tester1, tester2 } = await getContracts();
+        // @ts-ignore
         const JunkCoinERC20tester1 = await hre.ethers.getContract('JunkCoinERC20', tester1);
 
         expect(await JunkCoinERC20.allowance(deployer, tester1)).equal(BigNumber.from(0));
@@ -47,6 +50,7 @@ describe('JunkCoinERC20', () => {
 
     it('Transfer Error', async () => {
         const { JunkCoinERC20, deployer, tester1, tester2 } = await getContracts();
+        // @ts-ignore
         const JunkCoinERC20tester1 = await hre.ethers.getContract('JunkCoinERC20', tester1);
 
         expect(await JunkCoinERC20tester1.transfer(deployer, 100).catch((e: Error) => e.message))
