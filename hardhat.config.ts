@@ -27,6 +27,9 @@ const config: HardhatUserConfig = {
     providerPriority: ["web3modal", "hardhat"],
   },
   networks: {
+    localhost: {
+      url:"http://localhost:8545",
+    },
     hardhat: {
       chainId: 1337,
       inject: false, // optional. If true, it will EXPOSE your mnemonic in your frontend code. Then it would be available as an "in-page browser wallet" / signer which can sign without confirmation.
