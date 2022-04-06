@@ -2,11 +2,28 @@
 pragma solidity >=0.6.0 <0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+import "hardhat/console.sol";
 
 contract Arigatou {
+    enum ParticipantStatus {
+        NoRegistration,
+        NoParticipating,
+        Participated
+    }
+
+    struct ParticipantContext {
+        uint current;  // Current index of queue
+        ParticipantStatus status;
+        uint streak;  // Win streak
+        uint phase;  // Increment every transaction. This helps frontend status transition
+    }
+
     address private admin;
     address private coin;
+
+    // Match context
+    // Queue[] private queue;
+    mapping (address => ParticipantContext) private participants;
 
     // User's asset
     mapping (address => uint) private coinStock;
@@ -25,6 +42,20 @@ contract Arigatou {
      * Join match queue
      */
     function join() public /*timeout notParticipating phaseAdvance*/ {
+        console.log('aaa');
+        console.logInt(int8(participants[msg.sender].status));
+        console.logAddress(msg.sender);
+
+        //*
+        if (participants[msg.sender].status == ParticipantStatus.NoRegistration) {
+            coinStock[msg.sender] += 400;
+            participants[msg.sender].status = ParticipantStatus.Participated;
+        }
+        //*/
+        
+        console.logInt(int8(participants[msg.sender].status));
+        console.logUint(coinStock[msg.sender]);
+
         /*
         uint index = queue.length;
 
@@ -74,7 +105,7 @@ contract Arigatou {
      * Get own coin balance
      * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
      */
-    function getCoinBalance() pure public returns(uint) {
-        return 100;
+    function getCoinBalance() view public returns(uint coins) {
+        coins = coinStock[msg.sender];
     }
 }

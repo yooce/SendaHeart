@@ -11,6 +11,7 @@ export const Arigatou: React.FC<Props> = () => {
     const doAsync = async () => {
       if (!arigatou.instance) return;
       console.log("Arigatou is deployed at ", arigatou.instance.address);
+      await arigatou.instance.join()
       setMessage(String(await arigatou.instance.getCoinBalance()));
     };
     doAsync();
