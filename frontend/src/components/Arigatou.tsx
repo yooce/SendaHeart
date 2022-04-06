@@ -35,9 +35,9 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   return (
-    <div>
-      <Navbar bg="dark" variant="dark">
-        <Container fluid>
+    <div className="container">
+      <Navbar bg="dark" variant="dark" fixed="top">
+        <Container>
           <Navbar.Brand href="#">Arigatou System</Navbar.Brand>
           <Navbar.Text className="primary">ありがトークン : { String(tokenAmount) } ARGT</Navbar.Text>
           {participated
@@ -46,7 +46,8 @@ export const Arigatou: React.FC<Props> = () => {
           }
         </Container>
       </Navbar>
-      <div className="container">
+      <div className="mt-5 pt-3"></div>
+      <div>
         <p>{message}</p>
         <Button variant="primary">プライマリーボタン</Button>
       </div>
