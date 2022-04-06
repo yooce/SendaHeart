@@ -38,6 +38,10 @@ contract Arigatou {
         admin = msg.sender;
     }
 
+    function isParticipated() view public returns(bool) {
+        return participants[msg.sender].status == ParticipantStatus.Participated;
+    }
+
     /**
      * Join match queue
      */
