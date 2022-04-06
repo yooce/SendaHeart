@@ -29,6 +29,11 @@ contract Arigatou {
     mapping (address => uint) private coinStock;
 
     /**
+     * Emit when participant joined.
+     */
+    event Joined(address addr, uint index);
+
+    /**
      * Constructor
      * Obtain JunkCoin address from args
      * Obtain admin address from msg.sender
@@ -60,38 +65,7 @@ contract Arigatou {
         console.logInt(int8(participants[msg.sender].status));
         console.logUint(coinStock[msg.sender]);
 
-        /*
-        uint index = queue.length;
-
-        queue.push(Queue({
-            addr: msg.sender,
-            handShape: HandShape.Undefined,
-            timestamp: block.timestamp,
-            status: MatchStatus.Participated
-        }));
-
-        if (participants[msg.sender].status == ParticipantStatus.NoRegistration) {
-            // New registration
-            participants[msg.sender] = ParticipantContext({
-                current: index,
-                status: ParticipantStatus.Participated,
-                streak: 0,
-                phase: 0
-            });
-        } else {
-            // Continuous
-            participants[msg.sender].current = index;
-            participants[msg.sender].status = ParticipantStatus.Participated;
-        }
-
-        emit Joined(msg.sender, index);
-
-        if (index % 2 == 1) {
-            // Establish match when index is odd.
-            uint timestamp = bigger(queue[index - 1].timestamp, queue[index].timestamp);
-            emit Established(queue[index - 1].addr, index - 1, queue[index].addr, index, timestamp);
-        }
-        //*/
+        emit Joined(msg.sender, 0);
     }
 
     /**
