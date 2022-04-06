@@ -44,6 +44,7 @@ contract Arigatou {
     }
 
     function isParticipated() view public returns(bool) {
+        console.logAddress(coin);
         return participants[msg.sender].status == ParticipantStatus.Participated;
     }
 

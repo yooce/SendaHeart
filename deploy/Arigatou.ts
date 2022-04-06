@@ -20,6 +20,6 @@ module.exports = async ({
         args: [coin.address],
     });
 
-    await execute("ArigaTokenERC20", {from: deployer}, 'increaseAllowance', arigatou.address, '0');
+    await execute("ArigaTokenERC20", {from: deployer}, 'increaseAllowance', arigatou.address, '100000000');
   };
   

@@ -34,12 +34,19 @@ export const Arigatou: React.FC<Props> = () => {
     setMessage(String(await arigatou.instance.getCoinBalance()));
   }
 
+  const withdraw = () => {
+    if (!arigatou.instance) return;
+    arigatou.instance.withdraw()
+  }
+
   return (
     <div className="container">
       <Navbar bg="dark" variant="dark" fixed="top">
         <Container>
           <Navbar.Brand href="#">Arigatou System</Navbar.Brand>
-          <Navbar.Text className="primary">ありがトークン : { String(tokenAmount) } ARGT</Navbar.Text>
+          <Navbar.Text className="primary">ありがトークン：{ String(tokenAmount) } ARGT&nbsp;
+            <Button variant="primary" onClick={ withdraw }>出金</Button>
+          </Navbar.Text>
           {participated
             ? <Button variant="primary" disabled>ウォレット接続済</Button>
             : <Button variant="primary" onClick={ join }>ウォレット接続</Button>
