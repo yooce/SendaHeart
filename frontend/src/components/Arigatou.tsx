@@ -53,7 +53,7 @@ export const Arigatou: React.FC<Props> = () => {
           }
         </Container>
       </Navbar>
-      <div className="mt-5 pt-3"></div>
+      <div className="mt-5 pt-5"></div>
       <div>
         <p>{message}</p>
         <Button variant="primary">プライマリーボタン</Button>
