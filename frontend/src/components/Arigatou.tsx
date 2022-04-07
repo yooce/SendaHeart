@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ArigatouContext } from "./../hardhat/SymfoniContext";
+import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
 import { Navbar, Container, Button } from 'react-bootstrap';
 import {BigNumber} from "ethers";
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -9,6 +10,8 @@ interface Props {}
 
 export const Arigatou: React.FC<Props> = () => {
   const arigatou = useContext(ArigatouContext);
+  const [currentAddress] = useContext(CurrentAddressContext);
+
   const [participated, setParticipated] = useState<boolean>(false);
   const [tokenAmount, setTokenAmount] = useState<BigNumber>(BigNumber.from(0));
   const [message, setMessage] = useState("");
@@ -16,19 +19,26 @@ export const Arigatou: React.FC<Props> = () => {
   useEffect(() => {
     const doAsync = async () => {
       if (!arigatou.instance) return;
-      arigatou.instance.on('Joined', joinedHandler);
     };
     doAsync();
   }, [arigatou]);
 
-  const join = async () => {
+  const join = () => {
     if (participated) return;
     if (!arigatou.instance) return;
-    await arigatou.instance.join()
+    arigatou.instance.join()
+      .then((tx: TransactionResponse) => tx.wait())
+      .then(async () => {
+        if (!arigatou.instance) return;
+        setParticipated(await arigatou.instance.isParticipated());
+        setTokenAmount(await arigatou.instance.getCoinBalance());
+        setMessage(String(await arigatou.instance.getCoinBalance()));
+      })
   };
 
   const joinedHandler = async (addr: string, index: BigNumber) => {
     if (!arigatou.instance) return;
+    if (addr != currentAddress) return;
     setParticipated(await arigatou.instance.isParticipated());
     setTokenAmount(await arigatou.instance.getCoinBalance());
     setMessage(String(await arigatou.instance.getCoinBalance()));

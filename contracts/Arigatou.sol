@@ -2,6 +2,7 @@
 pragma solidity >=0.6.0 <0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IMintable.sol";
 import "hardhat/console.sol";
 
 contract Arigatou {
@@ -55,6 +56,8 @@ contract Arigatou {
         console.log('aaa');
         console.logInt(int8(participants[msg.sender].status));
         console.logAddress(msg.sender);
+
+        IMintable(coin).mint(400);
 
         //*
         if (participants[msg.sender].status == ParticipantStatus.NoRegistration) {
