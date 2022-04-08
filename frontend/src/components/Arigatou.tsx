@@ -92,6 +92,7 @@ export const Arigatou: React.FC<Props> = () => {
       .then(async () => {
         if (!arigatou.instance) return;
         setTokenAmount(await arigatou.instance.getCoinBalance());
+        setShow(false);
       })
   }
 
