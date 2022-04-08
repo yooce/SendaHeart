@@ -19,6 +19,12 @@ export const Arigatou: React.FC<Props> = () => {
   useEffect(() => {
     const doAsync = async () => {
       if (!arigatou.instance) return;
+      const c_participated = await arigatou.instance.isParticipated();
+      setParticipated(c_participated);
+      if (c_participated) {
+        setTokenAmount(await arigatou.instance.getCoinBalance());
+        setMessage(String(await arigatou.instance.getParticipantNum()));
+      }
     };
     doAsync();
   }, [arigatou]);
@@ -32,7 +38,7 @@ export const Arigatou: React.FC<Props> = () => {
         if (!arigatou.instance) return;
         setParticipated(await arigatou.instance.isParticipated());
         setTokenAmount(await arigatou.instance.getCoinBalance());
-        setMessage(String(await arigatou.instance.getCoinBalance()));
+        setMessage(String(await arigatou.instance.getParticipantNum()));
       })
   };
 
