@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
-import { Navbar, Container, Button } from 'react-bootstrap';
+import { Navbar, Container, Button, Table } from 'react-bootstrap';
 import {BigNumber} from "ethers";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
@@ -24,6 +24,10 @@ export const Arigatou: React.FC<Props> = () => {
       if (c_participated) {
         setTokenAmount(await arigatou.instance.getCoinBalance());
         setMessage(String(await arigatou.instance.getParticipantNum()));
+
+        let users : { 0: string[], 1: string[] };
+        users = await arigatou.instance.getUsers();
+        setMessage(users[0][0]);
       }
     };
     doAsync();
@@ -32,7 +36,7 @@ export const Arigatou: React.FC<Props> = () => {
   const join = () => {
     if (participated) return;
     if (!arigatou.instance) return;
-    arigatou.instance.join()
+    arigatou.instance.join('NewUser')
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
@@ -71,6 +75,35 @@ export const Arigatou: React.FC<Props> = () => {
       </Navbar>
       <div className="mt-5 pt-5"></div>
       <div>
+      <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td>@mdo</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Jacob</td>
+              <td>Thornton</td>
+              <td>@fat</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td colSpan={2}>Larry the Bird</td>
+              <td>@twitter</td>
+            </tr>
+          </tbody>
+        </Table>
         <p>{message}</p>
         <Button variant="primary">プライマリーボタン</Button>
       </div>

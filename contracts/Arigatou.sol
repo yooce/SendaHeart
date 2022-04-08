@@ -5,15 +5,17 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./IMintable.sol";
 import "hardhat/console.sol";
 
+pragma experimental ABIEncoderV2;
+
 contract Arigatou {
-    enum ParticipantStatus {
+    enum UserStatus {
         NoParticipating,
         Participated
     }
 
-    struct ParticipantContext {
+    struct UserContext {
         string name;
-        ParticipantStatus status;
+        UserStatus status;
         uint coins;
     }
 
@@ -22,28 +24,25 @@ contract Arigatou {
     address private admin;
     address private coin;
 
-    address[] private participantAddresses;
-    mapping (address => ParticipantContext) private participants;
+    address[] private addresses;
+    mapping (address => UserContext) private users;
 
-    /**
-     * Emit when participant joined.
-     */
+    // 参加イベント
     event Joined(address addr, uint index);
 
-    /**
-     * Constructor
-     * Obtain JunkCoin address from args
-     * Obtain admin address from msg.sender
-     */
+    // コンストラクタ
     constructor(address _coin) {
         coin = _coin;
         admin = msg.sender;
 
+        // デモ用セットアップ
         setupDemo();
     }
 
+    // デモ用セットアップ
     function setupDemo() private {
-        string[20] memory names = [
+        // デモ用ユーザー名
+        string[20] memory demoNames = [
             "User1",
             "User2",
             "User3",
@@ -65,7 +64,9 @@ contract Arigatou {
             "User19",
             "User20"
         ];
-        address payable[20] memory addresses = [
+
+        // デモ用アドレス
+        address payable[20] memory demoAddresses = [
             0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
             0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
             0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC,
@@ -88,50 +89,67 @@ contract Arigatou {
             0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199
         ];
 
-        IMintable(coin).mint(addresses.length * initialAmount);
-
-        for (uint256 i = 0; i < addresses.length; i++) {
-            participantAddresses.push(addresses[i]);
-            participants[addresses[i]] = ParticipantContext({
-                name: names[i],
-                status: ParticipantStatus.Participated,
-                coins: initialAmount
-            });
+        // ユーザー追加
+        for (uint256 i = 0; i < demoNames.length; i++) {
+            addUser(demoNames[i], demoAddresses[i]);
         }
+    }
+
+    // ユーザー追加
+    function addUser(string memory name, address addr) private {
+        // MINT
+        IMintable(coin).mint(initialAmount);
+
+        // 登録
+        addresses.push(addr);
+        users[addr] = UserContext({
+            name: name,
+            status: UserStatus.Participated,
+            coins: initialAmount
+        });
+
+        // イベント
+        emit Joined(addr, 0);
     }
 
     function isParticipated() view public returns(bool) {
         console.logAddress(coin);
-        return participants[msg.sender].status == ParticipantStatus.Participated;
+        return users[msg.sender].status == UserStatus.Participated;
     }
 
     function getParticipantNum() view public returns(uint256) {
-        return participantAddresses.length;
+        return addresses.length;
+    }
+
+    function getUsers() view public returns (string[] memory, address[] memory) {
+        uint length = addresses.length;
+        string[] memory names = new string[](length);
+        address[] memory addrs = new address[](length);
+
+        for (uint i = 0; i < length; i++) {
+            UserContext memory user = users[addresses[i]];
+            names[i] = user.name;
+            addrs[i] = addresses[i];
+        }
+
+        return (names, addrs);
     }
 
     /**
      * Join match queue
      */
-    function join() public /*timeout notParticipating phaseAdvance*/ {
-        if (participants[msg.sender].status == ParticipantStatus.NoParticipating) {
-            IMintable(coin).mint(initialAmount);
-            participantAddresses.push(msg.sender);
-            participants[msg.sender] = ParticipantContext({
-                name: "",
-                status: ParticipantStatus.Participated,
-                coins: initialAmount
-            });
+    function join(string memory name) public /*timeout notParticipating phaseAdvance*/ {
+        if (users[msg.sender].status == UserStatus.NoParticipating) {
+            addUser(name, msg.sender);
         }
-
-        emit Joined(msg.sender, 0);
     }
 
     /**
      * Withdraw JunkCoin
      */
     function withdraw() public /*timeout haveCoins phaseAdvance*/ {
-        uint amount = participants[msg.sender].coins;
-        participants[msg.sender].coins = 0;
+        uint amount = users[msg.sender].coins;
+        users[msg.sender].coins = 0;
         IERC20(coin).transferFrom(admin, msg.sender, amount);
 
         // emit Withdrew(msg.sender, amount);
@@ -142,6 +160,6 @@ contract Arigatou {
      * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
      */
     function getCoinBalance() view public returns(uint coins) {
-        coins = participants[msg.sender].coins;
+        coins = users[msg.sender].coins;
     }
 }
