@@ -6,6 +6,7 @@ import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { use } from "chai";
+import { send } from "process";
 
 interface Props {}
 
@@ -17,7 +18,9 @@ interface UserContext {
 export const Arigatou: React.FC<Props> = () => {
   const arigatou = useContext(ArigatouContext);
   const [currentAddress] = useContext(CurrentAddressContext);
-  const [show] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false);
+  const [sendUser, setSendUser] = useState<UserContext>();
+  const [sendAmount, setSendAmount] = useState<BigNumber>(BigNumber.from(0));
   const [participated, setParticipated] = useState<boolean>(false);
   const [tokenAmount, setTokenAmount] = useState<BigNumber>(BigNumber.from(0));
   const [message, setMessage] = useState("");
@@ -71,12 +74,29 @@ export const Arigatou: React.FC<Props> = () => {
     arigatou.instance.withdraw()
   }
 
-  const onClick = (addr: string) => {
-    console.log(addr);
+  const onClick = (user: UserContext) => {
+    setSendUser(user);
+    setShow(true);
   }
 
-  const handleClose = () => {
+  const onChange = (str: string) => {
+    setSendAmount(BigNumber.from(Number(str)));
+  }
 
+  const handleSend = () => {
+    console.log(sendAmount);
+    if (!arigatou.instance) return;
+    if (!sendUser) return;
+    arigatou.instance.transfer(sendUser.address, sendAmount)
+      .then((tx: TransactionResponse) => tx.wait())
+      .then(async () => {
+        if (!arigatou.instance) return;
+        setTokenAmount(await arigatou.instance.getCoinBalance());
+      })
+  }
+
+  const handleCancel = () => {
+    setShow(false);
   }
 
   return (
@@ -110,7 +130,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <tr key={index} v-for="user in users">
                     <td>{user.name}</td>
                     <td>{user.address}</td>
-                    <td><Button onClick={() => onClick(user.address)}>送付</Button></td>
+                    <td><Button onClick={() => onClick(user)}>送付</Button></td>
                   </tr>
                 )
               }
@@ -118,35 +138,21 @@ export const Arigatou: React.FC<Props> = () => {
           </tbody>
         </Table>
       </div>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleCancel}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>{sendUser?.name}に送金</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="name@example.com"
-                autoFocus
-              />
-            </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Label>Example textarea</Form.Label>
-              <Form.Control as="textarea" rows={3} />
-            </Form.Group>
+            <Form.Control placeholder="ARGT" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+          <Button variant="secondary" onClick={handleCancel}>
+            キャンセル
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
+          <Button variant="primary" onClick={handleSend}>
+            送付
           </Button>
         </Modal.Footer>
       </Modal>

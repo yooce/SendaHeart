@@ -135,6 +135,11 @@ contract Arigatou {
         return (names, addrs);
     }
 
+    function transfer(address opponent, uint amount) public {
+        users[msg.sender].coins -= amount;
+        users[opponent].coins += amount;
+    }
+
     /**
      * Join match queue
      */
