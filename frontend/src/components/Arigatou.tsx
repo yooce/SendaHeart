@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
-import { Navbar, Container, Button, Table, Modal, Form } from 'react-bootstrap';
+import { Navbar, Container, Button, Table, Modal, Form, Dropdown } from 'react-bootstrap';
 import {BigNumber} from "ethers";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
+import '../Arigatou.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { use } from "chai";
 import { send } from "process";
@@ -102,17 +103,40 @@ export const Arigatou: React.FC<Props> = () => {
 
   return (
     <div className="container">
-      <Navbar bg="dark" variant="dark" fixed="top">
-        <Container>
-          <Navbar.Brand href="#">Arigatou System</Navbar.Brand>
-          <Navbar.Text className="primary">ありがトークン：{ String(tokenAmount) } ARGT&nbsp;
-            <Button variant="primary" onClick={ withdraw }>出金</Button>
-          </Navbar.Text>
-          {participated
-            ? <Button variant="primary" disabled>ウォレット接続済</Button>
-            : <Button variant="primary" onClick={ join }>ウォレット接続</Button>
-          }
-        </Container>
+      <Navbar variant="light" fixed="top" className="arigatou_navbar">
+          <Navbar.Brand href="#" className="ms-3">
+            <img
+            alt=""
+            src="/heart.png"
+            width="30"
+            height="30"
+            />{' '}
+            Send a Heart
+          </Navbar.Brand>
+          <Navbar.Collapse className="justify-content-end">
+            <Navbar.Text className="me-5">ポイント: { String(tokenAmount) } &nbsp;
+              <Button variant="info">購入</Button>
+            </Navbar.Text>
+            <Navbar.Text className="me-5">DIT: { String(tokenAmount) } &nbsp;
+              <Button variant="info" onClick={ withdraw }>出金</Button>
+            </Navbar.Text>
+            <Navbar.Text className="me-1">コミュニティ:</Navbar.Text>
+            <Dropdown className="me-3">
+              <Dropdown.Toggle variant="info">
+                devillage Discord
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item href="#/action-1">devillage Discord</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Astar Network Discord</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">Development department</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            {participated
+              ? <Button variant="outline-info" className="me-3" disabled>ウォレット接続済</Button>
+              : <Button variant="info" className="me-3" onClick={ join }>ウォレット接続</Button>
+            }
+        </Navbar.Collapse>
       </Navbar>
       <div className="mt-5 pt-5"></div>
       <div>
@@ -131,7 +155,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <tr key={index} v-for="user in users">
                     <td>{user.name}</td>
                     <td>{user.address}</td>
-                    <td><Button onClick={() => onClick(user)}>送付</Button></td>
+                    <td><Button variant="info" onClick={() => onClick(user)}>送付</Button></td>
                   </tr>
                 )
               }
