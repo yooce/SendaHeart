@@ -11,7 +11,6 @@ function App() {
     <div>
       <Symfoni autoInit={true} >
         <Arigatou></Arigatou>
-        <Greeter></Greeter>
       </Symfoni>
     </div>
   );

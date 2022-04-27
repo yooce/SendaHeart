@@ -5,3 +5,12 @@
 .arigatou_card {
   margin: auto;
 }
+
+.arigatou_confirm {
+  min-width: 50%;
+}
+
+.arigatou_nft {
+  display: flex;
+  margin: auto;
+}
