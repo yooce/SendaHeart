@@ -130,7 +130,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Navbar.Brand href="#" className="ms-3">
             <img
             alt=""
-            src="/heart.png"
+            src="/normal.png"
             width="30"
             height="30"
             />{' '}
