@@ -219,7 +219,7 @@ export const Arigatou: React.FC<Props> = () => {
         <Modal.Body>
           <p>メッセージを入れよう！</p>
           <Form>
-            <Form.Control onChange={(e) => onChange(e.target.value)} autoFocus />
+            <Form.Control type="text" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
