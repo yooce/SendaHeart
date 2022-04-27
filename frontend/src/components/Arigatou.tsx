@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
-import { Navbar, Container, Button, Table, Modal, Form, Dropdown } from 'react-bootstrap';
+import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup } from 'react-bootstrap';
 import {BigNumber} from "ethers";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
@@ -164,6 +164,34 @@ export const Arigatou: React.FC<Props> = () => {
         </Table>
       </div>
       <Modal show={show} onHide={handleCancel}>
+        <Modal.Header closeButton>
+          <Modal.Title>{sendUser?.name}にありがとうを送る</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>ポイント: {String(tokenAmount)}</p>
+          <CardGroup>
+            <Card style={{ width: '18rem' }} className="text-center">
+              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+              <Card.Body>
+                <Button variant="info">150 Pts.</Button>
+              </Card.Body>
+            </Card>
+            <Card style={{ width: '18rem' }} className="text-center">
+              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+              <Card.Body>
+                <Button variant="info">300 Pts.</Button>
+              </Card.Body>
+            </Card>
+            <Card style={{ width: '18rem' }} className="text-center">
+              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+              <Card.Body>
+                <Button variant="info">450 Pts.</Button>
+              </Card.Body>
+            </Card>
+          </CardGroup>
+        </Modal.Body>
+      </Modal>
+      <Modal show={false} onHide={handleCancel}>
         <Modal.Header closeButton>
           <Modal.Title>{sendUser?.name}に送金</Modal.Title>
         </Modal.Header>
