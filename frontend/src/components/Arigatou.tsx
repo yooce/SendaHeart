@@ -32,7 +32,7 @@ export const Arigatou: React.FC<Props> = () => {
   const arigatou = useContext(ArigatouContext);
   const [currentAddress] = useContext(CurrentAddressContext);
   const [sendUser, setSendUser] = useState<UserContext>();
-  const [sendAmount, setSendAmount] = useState<BigNumber>(BigNumber.from(0));
+  const [message, setMessage] = useState<string>('');
   const [participated, setParticipated] = useState<boolean>(false);
   const [tokenAmount, setTokenAmount] = useState<BigNumber>(BigNumber.from(0));
   const [users, setUsers] = useState<UserContext[]>();
@@ -91,7 +91,7 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   const onChange = (str: string) => {
-    setSendAmount(BigNumber.from(Number(str)));
+    setMessage(str);
   }
 
   const onInputMessage = () => {
@@ -99,7 +99,7 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   const onConfirm = () => {
-    console.log(sendAmount);
+    /*
     if (!arigatou.instance) return;
     if (!sendUser) return;
     arigatou.instance.transfer(sendUser.address, sendAmount)
@@ -108,6 +108,8 @@ export const Arigatou: React.FC<Props> = () => {
         if (!arigatou.instance) return;
         setTokenAmount(await arigatou.instance.getCoinBalance());
       })
+    //*/
+    setSequence(SequenceStatus.SELECT_USER);
   }
 
   const onCancelSelectImage = () => {
@@ -184,27 +186,27 @@ export const Arigatou: React.FC<Props> = () => {
           </tbody>
         </Table>
       </div>
-      <Modal show={sequence == SequenceStatus.SELECT_IMAGE} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
+      <Modal show={sequence == SequenceStatus.SELECT_IMAGE} aria-labelledby="contained-modal-title-vcenter" centered dialogClassName="arigatou_confirm" onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
           <Modal.Title>{sendUser?.name}にありがとうを送る</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>ハートを選ぼう！（所持ポイント: {String(tokenAmount)}）</p>
           <CardGroup>
-            <Card style={{ width: '18rem' }} className="text-center">
-              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+            <Card className="text-center">
+              <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
               <Card.Body>
                 <Button variant="info" onClick={() => onSelectImage()}>150 Pts.</Button>
               </Card.Body>
             </Card>
-            <Card style={{ width: '18rem' }} className="text-center">
-              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+            <Card className="text-center">
+              <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/normal.png" />
               <Card.Body>
                 <Button variant="info" onClick={() => onSelectImage()}>300 Pts.</Button>
               </Card.Body>
             </Card>
-            <Card style={{ width: '18rem' }} className="text-center">
-              <Card.Img variant="top" style={{ width: '80%' }} className="arigatou_card mt-3" src="/heart.png" />
+            <Card className="text-center">
+              <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/kirakira.png" />
               <Card.Body>
                 <Button variant="info" onClick={() => onSelectImage()}>450 Pts.</Button>
               </Card.Body>
