@@ -16,7 +16,7 @@ interface Props {}
 interface UserContext {
   name: string,
   address: string
-  receipt: BigNumber
+  receipt: number
 }
 
 export enum SequenceStatus {
@@ -38,6 +38,7 @@ export const Arigatou: React.FC<Props> = () => {
   const [tokenAmount, setTokenAmount] = useState<BigNumber>(BigNumber.from(0));
   const [users, setUsers] = useState<UserContext[]>();
   const [sequence, setSequence] = useState<SequenceStatus>(SequenceStatus.NOT_PARTICIPATE);
+  const [totalReceipts, setTotalReceipts] = useState<BigNumber>(BigNumber.from(0));
   useEffect(() => {
     const doAsync = async () => {
       if (!arigatou.instance) return;
@@ -45,13 +46,19 @@ export const Arigatou: React.FC<Props> = () => {
       setParticipated(c_participated);
       if (c_participated) {
         setTokenAmount(await arigatou.instance.getCoinBalance());
+        setTotalReceipts(await arigatou.instance.getTotalReceipts());
 
-        let users : { 0: string[], 1: string[] };
+        let users : { 0: string[], 1: string[], 2: BigNumber[] };
         users = await arigatou.instance.getUsers();
         let c_users : UserContext[] = new Array(users[0].length);
         for (let i = 0; i < users[0].length; i++ ) {
-          c_users[i] = { name: users[0][i], address: users[1][i], receipt: BigNumber.from(i)};
+          c_users[i] = { name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
         }
+        c_users.sort((a: UserContext, b: UserContext) => {
+          if (a.receipt > b.receipt) return -1;
+          if (a.receipt == b.receipt) return 0;
+          return 1;
+        })
         setUsers(c_users);
       }
     };
@@ -156,6 +163,7 @@ export const Arigatou: React.FC<Props> = () => {
                 <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
+            <Navbar.Text className="me-5">Total receipt Pts.: { String(totalReceipts )}</Navbar.Text>
             {participated
               ? <Button variant="outline-info" className="me-3" disabled>Connected</Button>
               : <Button variant="info" className="me-3" onClick={ join }>Connect</Button>
@@ -180,7 +188,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <tr key={index} v-for="user in users">
                     <td>{user.name}</td>
                     <td>{user.address}</td>
-                    <td>{String(user.receipt)}</td>
+                    <td>{user.receipt}</td>
                     <td><Button variant="info" onClick={() => onSelectUser(user)}>Send</Button></td>
                   </tr>
                 )

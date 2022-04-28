@@ -17,6 +17,7 @@ contract Arigatou {
         string name;
         UserStatus status;
         uint coins;
+        uint receipts;
     }
 
     uint constant private initialAmount = 500;
@@ -89,14 +90,38 @@ contract Arigatou {
             0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199
         ];
 
+        // デモ用受領量
+        uint16[20] memory demoReceipts = [
+            0,
+            450,
+            300,
+            300,
+            150,
+            150,
+            150,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ];
+
         // ユーザー追加
         for (uint256 i = 0; i < demoNames.length; i++) {
-            addUser(demoNames[i], demoAddresses[i]);
+            addUser(demoNames[i], demoAddresses[i], demoReceipts[i]);
         }
     }
 
     // ユーザー追加
-    function addUser(string memory name, address addr) private {
+    function addUser(string memory name, address addr, uint receipt) private {
         // MINT
         IMintable(coin).mint(initialAmount);
 
@@ -105,7 +130,8 @@ contract Arigatou {
         users[addr] = UserContext({
             name: name,
             status: UserStatus.Participated,
-            coins: initialAmount
+            coins: initialAmount,
+            receipts: receipt
         });
 
         // イベント
@@ -121,18 +147,20 @@ contract Arigatou {
         return addresses.length;
     }
 
-    function getUsers() view public returns (string[] memory, address[] memory) {
+    function getUsers() view public returns (string[] memory, address[] memory, uint[] memory) {
         uint length = addresses.length;
         string[] memory names = new string[](length);
         address[] memory addrs = new address[](length);
+        uint[] memory receipts = new uint[](length);
 
         for (uint i = 0; i < length; i++) {
             UserContext memory user = users[addresses[i]];
             names[i] = user.name;
             addrs[i] = addresses[i];
+            receipts[i] = user.receipts;
         }
 
-        return (names, addrs);
+        return (names, addrs, receipts);
     }
 
     function transfer(address opponent, uint amount) public {
@@ -145,7 +173,7 @@ contract Arigatou {
      */
     function join(string memory name) public /*timeout notParticipating phaseAdvance*/ {
         if (users[msg.sender].status == UserStatus.NoParticipating) {
-            addUser(name, msg.sender);
+            addUser(name, msg.sender, 0);
         }
     }
 
@@ -164,7 +192,15 @@ contract Arigatou {
      * Get own coin balance
      * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
      */
-    function getCoinBalance() view public returns(uint coins) {
+    function getCoinBalance() view public returns (uint coins) {
         coins = users[msg.sender].coins;
+    }
+
+    function getTotalReceipts() view public returns (uint) {
+        uint sum = 0;
+        for (uint i = 0; i < addresses.length; i++) {
+            sum += users[addresses[i]].receipts;
+        }
+        return sum;
     }
 }
