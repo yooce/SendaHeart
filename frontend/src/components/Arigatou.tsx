@@ -137,13 +137,13 @@ export const Arigatou: React.FC<Props> = () => {
             Send a Heart
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text className="me-5">ポイント: { String(tokenAmount) } &nbsp;
-              <Button variant="info">購入</Button>
+            <Navbar.Text className="me-5">Point: { String(tokenAmount) } &nbsp;
+              <Button variant="info">Purchase</Button>
             </Navbar.Text>
             <Navbar.Text className="me-5">DIT: { String(tokenAmount) } &nbsp;
-              <Button variant="info" onClick={ withdraw }>出金</Button>
+              <Button variant="info" onClick={ withdraw }>Withdraw</Button>
             </Navbar.Text>
-            <Navbar.Text className="me-1">コミュニティ:</Navbar.Text>
+            <Navbar.Text className="me-1">Community:</Navbar.Text>
             <Dropdown className="me-3">
               <Dropdown.Toggle variant="info">
                 devillage Discord
@@ -156,8 +156,8 @@ export const Arigatou: React.FC<Props> = () => {
               </Dropdown.Menu>
             </Dropdown>
             {participated
-              ? <Button variant="outline-info" className="me-3" disabled>ウォレット接続済</Button>
-              : <Button variant="info" className="me-3" onClick={ join }>ウォレット接続</Button>
+              ? <Button variant="outline-info" className="me-3" disabled>Connected</Button>
+              : <Button variant="info" className="me-3" onClick={ join }>Connect</Button>
             }
         </Navbar.Collapse>
       </Navbar>
@@ -166,9 +166,9 @@ export const Arigatou: React.FC<Props> = () => {
       <Table striped bordered hover>
           <thead>
             <tr>
-              <th>ユーザー名</th>
-              <th>アドレス</th>
-              <th>送付</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Send</th>
             </tr>
           </thead>
           <tbody>
@@ -178,7 +178,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <tr key={index} v-for="user in users">
                     <td>{user.name}</td>
                     <td>{user.address}</td>
-                    <td><Button variant="info" onClick={() => onSelectUser(user)}>送付</Button></td>
+                    <td><Button variant="info" onClick={() => onSelectUser(user)}>Send</Button></td>
                   </tr>
                 )
               }
@@ -188,10 +188,10 @@ export const Arigatou: React.FC<Props> = () => {
       </div>
       <Modal show={sequence == SequenceStatus.SELECT_IMAGE} aria-labelledby="contained-modal-title-vcenter" centered dialogClassName="arigatou_confirm" onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
-          <Modal.Title>{sendUser?.name}にありがとうを送る</Modal.Title>
+          <Modal.Title>Send a heart token to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>ハートを選ぼう！（所持ポイント: {String(tokenAmount)}）</p>
+          <p>Choose a heart! (Possession points: {String(tokenAmount)})</p>
           <CardGroup>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
@@ -216,37 +216,37 @@ export const Arigatou: React.FC<Props> = () => {
       </Modal>
       <Modal show={sequence == SequenceStatus.INPUT_MESSAGE} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
-          <Modal.Title>{sendUser?.name}にありがとうを送る</Modal.Title>
+          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>メッセージを入れよう！</p>
+          <p>Let's put a message!</p>
           <Form>
             <Form.Control type="text" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={onCancelInputMessage}>
-            戻る
+            Back
           </Button>
           <Button variant="info" onClick={onInputMessage}>
-            決定
+            OK
           </Button>
         </Modal.Footer>
       </Modal>
       <Modal show={sequence == SequenceStatus.CONFIRM} aria-labelledby="contained-modal-title-vcenter" centered dialogClassName="arigatou_confirm" onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
-          <Modal.Title>{sendUser?.name}にありがとうを送る</Modal.Title>
+          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>このありがトークンを送ります。よろしいですか？</p>
+          <p>Would you like to send this heart?</p>
           <Image className="arigatou_nft" style={{width: '50rem'}} src="/sample_nft.png"></Image>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={onCancelConfirm}>
-            戻る
+            Back
           </Button>
           <Button variant="info" onClick={onConfirm}>
-            送付
+            Send
           </Button>
         </Modal.Footer>
       </Modal>
