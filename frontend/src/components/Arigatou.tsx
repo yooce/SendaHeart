@@ -23,6 +23,7 @@ export enum SequenceStatus {
   NOT_PARTICIPATE,
   SELECT_USER,
   SELECT_IMAGE,
+  BEFORE_INPUT_MESSAGE,
   INPUT_MESSAGE,
   CONFIRM,
   SENDING,
@@ -95,7 +96,7 @@ export const Arigatou: React.FC<Props> = () => {
 
   const onSelectUser = (user: UserContext) => {
     setSendUser(user);
-    setSequence(SequenceStatus.SELECT_IMAGE);
+    setSequence(SequenceStatus.BEFORE_INPUT_MESSAGE);
   }
 
   const onSelectImage = () => {
@@ -229,6 +230,7 @@ export const Arigatou: React.FC<Props> = () => {
           </CardGroup>
         </Modal.Body>
       </Modal>
+      <Modal show={sequence == SequenceStatus.BEFORE_INPUT_MESSAGE} onEnter={() => setSequence(SequenceStatus.SELECT_IMAGE)}></Modal>
       <Modal show={sequence == SequenceStatus.INPUT_MESSAGE} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
