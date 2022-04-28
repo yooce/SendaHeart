@@ -188,7 +188,7 @@ export const Arigatou: React.FC<Props> = () => {
       </div>
       <Modal show={sequence == SequenceStatus.SELECT_IMAGE} aria-labelledby="contained-modal-title-vcenter" centered dialogClassName="arigatou_confirm" onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
-          <Modal.Title>Send a heart token to {sendUser?.name}</Modal.Title>
+          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>Choose a heart! (Possession points: {String(tokenAmount)})</p>
