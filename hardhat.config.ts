@@ -123,14 +123,16 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      default: 0,
+      default: 19,
     },
+    /*
     tester1: {
       default: 1,
     },
     tester2: {
       default: 2,
     }
+    //*/
   },
 };
 export default config;

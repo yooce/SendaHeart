@@ -9,7 +9,7 @@ contract DohitashimashiTokenERC20 is ERC20 {
 
     address admin;
 
-    constructor() ERC20("ArigaToken", "ARGT") {
+    constructor() ERC20("DohitashimashiToken", "DIT") {
         admin = msg.sender;
         _mint(msg.sender, initialSupplies);
     }

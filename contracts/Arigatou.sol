@@ -16,14 +16,16 @@ contract Arigatou {
     struct UserContext {
         string name;
         UserStatus status;
-        uint coins;
+        uint points;
         uint receipts;
+        uint dits;
     }
 
     uint constant private initialAmount = 500;
 
     address private admin;
-    address private coin;
+    address private point;
+    address private dit;
 
     address[] private addresses;
     mapping (address => UserContext) private users;
@@ -32,8 +34,9 @@ contract Arigatou {
     event Joined(address addr, uint index);
 
     // コンストラクタ
-    constructor(address _coin) {
-        coin = _coin;
+    constructor(address _point, address _dit) {
+        point = _point;
+        dit = _dit;
         admin = msg.sender;
 
         // デモ用セットアップ
@@ -115,7 +118,7 @@ contract Arigatou {
         ];
 
         // ユーザー追加
-        for (uint256 i = 0; i < demoNames.length; i++) {
+        for (uint256 i = 0; i < demoNames.length - 1; i++) {
             addUser(demoNames[i], demoAddresses[i], demoReceipts[i]);
         }
     }
@@ -123,14 +126,15 @@ contract Arigatou {
     // ユーザー追加
     function addUser(string memory name, address addr, uint receipt) private {
         // MINT
-        IMintable(coin).mint(initialAmount);
+        IMintable(point).mint(initialAmount);
 
         // 登録
         addresses.push(addr);
         users[addr] = UserContext({
             name: name,
             status: UserStatus.Participated,
-            coins: initialAmount,
+            points: initialAmount,
+            dits: 0,
             receipts: receipt
         });
 
@@ -139,7 +143,6 @@ contract Arigatou {
     }
 
     function isParticipated() view public returns(bool) {
-        console.logAddress(coin);
         return users[msg.sender].status == UserStatus.Participated;
     }
 
@@ -164,8 +167,8 @@ contract Arigatou {
     }
 
     function transfer(address opponent, uint amount) public {
-        users[msg.sender].coins -= amount;
-        users[opponent].coins += amount;
+        users[msg.sender].points -= amount;
+        users[opponent].points += amount;
     }
 
     /**
@@ -181,9 +184,9 @@ contract Arigatou {
      * Withdraw JunkCoin
      */
     function withdraw() public /*timeout haveCoins phaseAdvance*/ {
-        uint amount = users[msg.sender].coins;
-        users[msg.sender].coins = 0;
-        IERC20(coin).transferFrom(admin, msg.sender, amount);
+        uint amount = users[msg.sender].points;
+        users[msg.sender].points = 0;
+        IERC20(point).transferFrom(admin, msg.sender, amount);
 
         // emit Withdrew(msg.sender, amount);
     }
@@ -193,7 +196,7 @@ contract Arigatou {
      * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
      */
     function getCoinBalance() view public returns (uint coins) {
-        coins = users[msg.sender].coins;
+        coins = users[msg.sender].points;
     }
 
     function getTotalReceipts() view public returns (uint) {
