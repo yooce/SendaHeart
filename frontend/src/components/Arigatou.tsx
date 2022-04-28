@@ -35,7 +35,8 @@ export const Arigatou: React.FC<Props> = () => {
   const [sendUser, setSendUser] = useState<UserContext>();
   const [message, setMessage] = useState<string>('');
   const [participated, setParticipated] = useState<boolean>(false);
-  const [tokenAmount, setTokenAmount] = useState<BigNumber>(BigNumber.from(0));
+  const [pointBalance, setPointBalance] = useState<BigNumber>(BigNumber.from(0));
+  const [ditBalance, setDitBalance] = useState<BigNumber>(BigNumber.from(0));
   const [users, setUsers] = useState<UserContext[]>();
   const [sequence, setSequence] = useState<SequenceStatus>(SequenceStatus.NOT_PARTICIPATE);
   const [totalReceipts, setTotalReceipts] = useState<BigNumber>(BigNumber.from(0));
@@ -45,7 +46,8 @@ export const Arigatou: React.FC<Props> = () => {
       const c_participated = await arigatou.instance.isParticipated();
       setParticipated(c_participated);
       if (c_participated) {
-        setTokenAmount(await arigatou.instance.getCoinBalance());
+        setPointBalance(await arigatou.instance.getPointBalance());
+        setDitBalance(await arigatou.instance.getDitBalance());
         setTotalReceipts(await arigatou.instance.getTotalReceipts());
 
         let users : { 0: string[], 1: string[], 2: BigNumber[] };
@@ -73,7 +75,8 @@ export const Arigatou: React.FC<Props> = () => {
       .then(async () => {
         if (!arigatou.instance) return;
         setParticipated(await arigatou.instance.isParticipated());
-        setTokenAmount(await arigatou.instance.getCoinBalance());
+        setPointBalance(await arigatou.instance.getPointBalance());
+        setDitBalance(await arigatou.instance.getDitBalance());
       })
   };
 
@@ -81,7 +84,8 @@ export const Arigatou: React.FC<Props> = () => {
     if (!arigatou.instance) return;
     if (addr != currentAddress) return;
     setParticipated(await arigatou.instance.isParticipated());
-    setTokenAmount(await arigatou.instance.getCoinBalance());
+    setPointBalance(await arigatou.instance.getPointBalance());
+        setDitBalance(await arigatou.instance.getDitBalance());
   }
 
   const withdraw = () => {
@@ -145,15 +149,15 @@ export const Arigatou: React.FC<Props> = () => {
             Send a Heart
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text className="me-5">Point: { String(tokenAmount) } &nbsp;
-              <Button variant="info">Purchase</Button>
+            <Navbar.Text className="text-dark me-5">Point: { String(pointBalance) } &nbsp;
+              <Button variant="info text-light">Purchase</Button>
             </Navbar.Text>
-            <Navbar.Text className="me-5">DIT: { String(tokenAmount) } &nbsp;
-              <Button variant="info" onClick={ withdraw }>Withdraw</Button>
+            <Navbar.Text className="text-dark me-5">DIT: { String(ditBalance) } &nbsp;
+              <Button variant="info text-light" onClick={ withdraw }>Withdraw</Button>
             </Navbar.Text>
-            <Navbar.Text className="me-1">Community:</Navbar.Text>
+            <Navbar.Text className="text-dark me-1">Community:</Navbar.Text>
             <Dropdown className="me-3">
-              <Dropdown.Toggle variant="info">
+              <Dropdown.Toggle variant="info text-light">
                 devillage Discord
               </Dropdown.Toggle>
               <Dropdown.Menu>
@@ -163,10 +167,10 @@ export const Arigatou: React.FC<Props> = () => {
                 <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <Navbar.Text className="me-5">Total receipt Pts.: { String(totalReceipts )}</Navbar.Text>
+            <Navbar.Text className="text-dark me-5">Total receipt Pts.: { String(totalReceipts )}</Navbar.Text>
             {participated
               ? <Button variant="outline-info" className="me-3" disabled>Connected</Button>
-              : <Button variant="info" className="me-3" onClick={ join }>Connect</Button>
+              : <Button variant="info text-light" className="me-3" onClick={ join }>Connect</Button>
             }
         </Navbar.Collapse>
       </Navbar>
@@ -189,7 +193,7 @@ export const Arigatou: React.FC<Props> = () => {
                     <td>{user.name}</td>
                     <td>{user.address}</td>
                     <td>{user.receipt}</td>
-                    <td><Button variant="info" onClick={() => onSelectUser(user)}>Send</Button></td>
+                    <td><Button variant="info text-light" onClick={() => onSelectUser(user)}>Send</Button></td>
                   </tr>
                 )
               }
@@ -202,24 +206,24 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Choose a heart! (Possession points: {String(tokenAmount)})</p>
+          <p>Choose a heart! (Possession points: {String(pointBalance)})</p>
           <CardGroup>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
               <Card.Body>
-                <Button variant="info" onClick={() => onSelectImage()}>150 Pts.</Button>
+                <Button variant="info text-light" onClick={() => onSelectImage()}>150 Pts.</Button>
               </Card.Body>
             </Card>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/normal.png" />
               <Card.Body>
-                <Button variant="info" onClick={() => onSelectImage()}>300 Pts.</Button>
+                <Button variant="info text-light" onClick={() => onSelectImage()}>300 Pts.</Button>
               </Card.Body>
             </Card>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/kirakira.png" />
               <Card.Body>
-                <Button variant="info" onClick={() => onSelectImage()}>450 Pts.</Button>
+                <Button variant="info text-light" onClick={() => onSelectImage()}>450 Pts.</Button>
               </Card.Body>
             </Card>
           </CardGroup>
@@ -239,7 +243,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Button variant="secondary" onClick={onCancelInputMessage}>
             Back
           </Button>
-          <Button variant="info" onClick={onInputMessage}>
+          <Button variant="info text-light" onClick={onInputMessage}>
             OK
           </Button>
         </Modal.Footer>
@@ -256,7 +260,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Button variant="secondary" onClick={onCancelConfirm}>
             Back
           </Button>
-          <Button variant="info" onClick={onConfirm}>
+          <Button variant="info text-light" onClick={onConfirm}>
             Send
           </Button>
         </Modal.Footer>
