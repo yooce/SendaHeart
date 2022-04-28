@@ -16,6 +16,7 @@ interface Props {}
 interface UserContext {
   name: string,
   address: string
+  receipt: BigNumber
 }
 
 export enum SequenceStatus {
@@ -49,7 +50,7 @@ export const Arigatou: React.FC<Props> = () => {
         users = await arigatou.instance.getUsers();
         let c_users : UserContext[] = new Array(users[0].length);
         for (let i = 0; i < users[0].length; i++ ) {
-          c_users[i] = { name: users[0][i], address: users[1][i] };
+          c_users[i] = { name: users[0][i], address: users[1][i], receipt: BigNumber.from(i)};
         }
         setUsers(c_users);
       }
@@ -168,6 +169,7 @@ export const Arigatou: React.FC<Props> = () => {
             <tr>
               <th>Name</th>
               <th>Address</th>
+              <th>Receipt</th>
               <th>Send</th>
             </tr>
           </thead>
@@ -178,6 +180,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <tr key={index} v-for="user in users">
                     <td>{user.name}</td>
                     <td>{user.address}</td>
+                    <td>{String(user.receipt)}</td>
                     <td><Button variant="info" onClick={() => onSelectUser(user)}>Send</Button></td>
                   </tr>
                 )
