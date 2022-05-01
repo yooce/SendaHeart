@@ -8,7 +8,7 @@ module.exports = async ({
     const { deployer } = await getNamedAccounts();
   
     // the following will only deploy "GenericMetaTxProcessor" if the contract was never deployed or if the code changed since last deployment
-    const point = await deploy("ArigaTokenERC20", {
+    const point = await deploy("PoinTokenERC20", {
       from: deployer,
       args: [],
     });
@@ -23,7 +23,7 @@ module.exports = async ({
       args: [],
     })
 
-    console.log("Point address: " + point.address);
+    console.log("PNT address: " + point.address);
     console.log("DIT address: " + dit.address);
     console.log("NFT address: " + nft.address);
 

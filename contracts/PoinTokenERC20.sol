@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./IMintable.sol";
 
-contract ArigaTokenERC20 is ERC20, IMintable {
+contract PoinTokenERC20 is ERC20, IMintable {
     address admin;
 
-    constructor() ERC20("ArigaToken", "ARGT") {
+    constructor() ERC20("PoinToken", "PNT") {
         admin = msg.sender;
     }
 
