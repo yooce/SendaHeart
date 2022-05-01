@@ -9,8 +9,8 @@ module.exports = async ({
   
     // the following will only deploy "GenericMetaTxProcessor" if the contract was never deployed or if the code changed since last deployment
     const point = await deploy("ArigaTokenERC20", {
-        from: deployer,
-        args: [],
+      from: deployer,
+      args: [],
     });
 
     const dit = await deploy("DohitashimashiTokenERC20", {
@@ -18,8 +18,14 @@ module.exports = async ({
       args: [],
     });
 
+    const nft = await deploy("ArigaTokenERC721", {
+      from: deployer,
+      args: [],
+    })
+
     console.log("Point address: " + point.address);
     console.log("DIT address: " + dit.address);
+    console.log("NFT address: " + nft.address);
 
     const arigatou = await deploy("Arigatou", {
         from: deployer,

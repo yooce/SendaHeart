@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
+import { ArigaTokenERC721Context, ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
 import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image } from 'react-bootstrap';
 import { BsArrowLeft } from "react-icons/bs";
 import {BigNumber} from "ethers";
@@ -32,6 +32,7 @@ export enum SequenceStatus {
 
 export const Arigatou: React.FC<Props> = () => {
   const arigatou = useContext(ArigatouContext);
+  const nft = useContext(ArigaTokenERC721Context);
   const [currentAddress] = useContext(CurrentAddressContext);
   const [sendUser, setSendUser] = useState<UserContext>();
   const [message, setMessage] = useState<string>('');
@@ -137,6 +138,11 @@ export const Arigatou: React.FC<Props> = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
   }
 
+  const nftTest = () => {
+    if (!nft.instance) return;
+    nft.instance.mintNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "http://localhost:3000/normal.png");
+  }
+
   return (
     <div className="container">
       <Navbar variant="light" fixed="top" className="arigatou_navbar">
@@ -149,6 +155,9 @@ export const Arigatou: React.FC<Props> = () => {
             />{' '}
             Send a Heart
           </Navbar.Brand>
+          <Navbar.Text onClick={ nftTest }>
+            <Button variant="info text-light">NFT Test</Button>
+          </Navbar.Text>
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="text-dark me-5">Point: { String(pointBalance) } &nbsp;
               <Button variant="info text-light">Purchase</Button>
