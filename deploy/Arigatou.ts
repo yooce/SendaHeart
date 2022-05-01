@@ -29,7 +29,7 @@ module.exports = async ({
 
     const arigatou = await deploy("Arigatou", {
         from: deployer,
-        args: [point.address, dit.address],
+        args: [point.address, dit.address, nft.address],
     });
   };
   

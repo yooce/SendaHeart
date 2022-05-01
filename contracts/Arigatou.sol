@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./IMintable.sol";
+import "./IGivable.sol";
 import "hardhat/console.sol";
 
 pragma experimental ABIEncoderV2;
@@ -26,6 +27,7 @@ contract Arigatou {
     address private admin;
     address private point;
     address private dit;
+    address private nft;
 
     address[] private addresses;
     mapping (address => UserContext) private users;
@@ -34,9 +36,10 @@ contract Arigatou {
     event Joined(address addr, uint index);
 
     // コンストラクタ
-    constructor(address _point, address _dit) {
+    constructor(address _point, address _dit, address _nft) {
         point = _point;
         dit = _dit;
+        nft = _nft;
         admin = msg.sender;
 
         // デモ用セットアップ
@@ -209,5 +212,15 @@ contract Arigatou {
             sum += users[addresses[i]].receipts;
         }
         return sum;
+    }
+
+    function test(string memory tokenURI) public {
+        console.log("ok");
+        users[msg.sender].name = tokenURI;
+    }
+
+    function giveNft(address recipient, string memory tokenURI) public {
+        console.log("ok");
+        IGivable(nft).give(recipient, tokenURI);
     }
 }

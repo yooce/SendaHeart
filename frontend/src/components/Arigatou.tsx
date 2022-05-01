@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ArigaTokenERC721Context, ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
+import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
 import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image } from 'react-bootstrap';
 import { BsArrowLeft } from "react-icons/bs";
 import {BigNumber} from "ethers";
@@ -32,7 +32,6 @@ export enum SequenceStatus {
 
 export const Arigatou: React.FC<Props> = () => {
   const arigatou = useContext(ArigatouContext);
-  const nft = useContext(ArigaTokenERC721Context);
   const [currentAddress] = useContext(CurrentAddressContext);
   const [sendUser, setSendUser] = useState<UserContext>();
   const [message, setMessage] = useState<string>('');
@@ -87,7 +86,7 @@ export const Arigatou: React.FC<Props> = () => {
     if (addr != currentAddress) return;
     setParticipated(await arigatou.instance.isParticipated());
     setPointBalance(await arigatou.instance.getPointBalance());
-        setDitBalance(await arigatou.instance.getDitBalance());
+    setDitBalance(await arigatou.instance.getDitBalance());
   }
 
   const withdraw = () => {
@@ -139,8 +138,15 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   const nftTest = () => {
-    if (!nft.instance) return;
-    nft.instance.mintNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "http://localhost:3000/normal.png");
+    if (!arigatou.instance) return;
+    // arigatou.instance.giveNft("0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "http://localhost:3000/normal.png");
+    //arigatou.instance.test("http://localhost:3000/normal.png");
+    arigatou.instance.transfer("0x70997970C51812dc3A010C7d01b50e0d17dc79C8", 200)
+      .then((tx: TransactionResponse) => tx.wait())
+      .then(async () => {
+        if (!arigatou.instance) return;
+        setPointBalance(await arigatou.instance.getPointBalance());
+      })
   }
 
   return (
