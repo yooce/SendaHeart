@@ -27,8 +27,7 @@ export enum SequenceStatus {
   INPUT_MESSAGE,
   CONFIRM,
   SENDING,
-  SENDING_COMPLETE,
-  RECEIVED
+  SENDING_COMPLETE
 }
 
 export const Arigatou: React.FC<Props> = () => {
@@ -97,6 +96,11 @@ export const Arigatou: React.FC<Props> = () => {
   const withdraw = () => {
     if (!arigatou.instance) return;
     arigatou.instance.withdraw()
+    .then((tx: TransactionResponse) => tx.wait())
+    .then(async () => {
+      if (!arigatou.instance) return;
+      setDitBalance(await arigatou.instance.getDitBalance());
+    })
   }
 
   const onSelectUser = (user: UserContext) => {
@@ -127,6 +131,7 @@ export const Arigatou: React.FC<Props> = () => {
         updateUsers();
         setPointBalance(await arigatou.instance.getPointBalance());
         setTotalReceipts(await arigatou.instance.getTotalReceipts());
+        setDitBalance(await arigatou.instance.getDitBalance());
         setSequence(SequenceStatus.SENDING_COMPLETE);
       })
   }
@@ -145,22 +150,6 @@ export const Arigatou: React.FC<Props> = () => {
 
   const onCancelConfirm = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
-  }
-
-  const onReceive = () => {
-    if (!arigatou.instance) return;
-    setSequence(SequenceStatus.RECEIVED);
-    arigatou.instance.receiveNft()
-      .then((tx: TransactionResponse) => tx.wait())
-      .then(async () => {
-        if (!arigatou.instance) return;
-        updateUsers();
-        setDitBalance(await arigatou.instance.getDitBalance());
-      })
-  }
-
-  const onReceived = () => {
-    setSequence(SequenceStatus.SELECT_USER);
   }
 
   return (
@@ -217,7 +206,7 @@ export const Arigatou: React.FC<Props> = () => {
               if (user.address != currentAddress) {
                 return (
                   <tr key={index} v-for="user in users">
-                    <td onClick={ onReceive }>{user.name}</td>
+                    <td>{user.name}</td>
                     <td>{user.address}</td>
                     <td>{user.receipt}</td>
                     <td><Button variant="info text-light" onClick={() => onSelectUser(user)}>Send</Button></td>
@@ -311,23 +300,10 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>Your heart has sent.</Card.Text>
+          <Card.Text>You have got 15 DIT!</Card.Text>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="info text-light" onClick={onSendingComplete}>
-            OK
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={sequence == SequenceStatus.RECEIVED} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
-        <Modal.Header closeButton>
-          <Modal.Title>You have got DIT!</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Card.Text>15 DIT</Card.Text>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="info text-light" onClick={onReceived}>
             OK
           </Button>
         </Modal.Footer>

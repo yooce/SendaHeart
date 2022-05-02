@@ -223,9 +223,8 @@ contract Arigatou {
 
         // 受領量追加
         users[recipient].receipts += cost;
-    }
 
-    function receiveNft() public {
+        // DIT付与
         users[msg.sender].dits += 15;
     }
 }
