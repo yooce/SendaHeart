@@ -50,7 +50,7 @@ contract Arigatou {
     function setupDemo() private {
         // デモ用ユーザー名
         string[20] memory demoNames = [
-            "bottn",
+            "bottn (Me)",
             "Mameta",
             "User3",
             "User4",
