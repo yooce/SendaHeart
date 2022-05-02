@@ -214,13 +214,7 @@ contract Arigatou {
         return sum;
     }
 
-    function test(string memory tokenURI) public {
-        console.log("ok");
-        users[msg.sender].name = tokenURI;
-    }
-
     function giveNft(address recipient, string memory tokenURI) public {
-        console.log("ok");
         IGivable(nft).give(recipient, tokenURI);
     }
 }

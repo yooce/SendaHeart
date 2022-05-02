@@ -112,17 +112,17 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   const onConfirm = () => {
-    /*
+    //*
     if (!arigatou.instance) return;
     if (!sendUser) return;
-    arigatou.instance.transfer(sendUser.address, sendAmount)
+    arigatou.instance.giveNft(sendUser.address, "http://localhost:3000/normal.png")
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
-        setTokenAmount(await arigatou.instance.getCoinBalance());
+        //setTokenAmount(await arigatou.instance.getCoinBalance());
+        setSequence(SequenceStatus.SELECT_USER);
       })
     //*/
-    setSequence(SequenceStatus.SELECT_USER);
   }
 
   const onCancelSelectImage = () => {
@@ -137,18 +137,6 @@ export const Arigatou: React.FC<Props> = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
   }
 
-  const nftTest = () => {
-    if (!arigatou.instance) return;
-    // arigatou.instance.giveNft("0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "http://localhost:3000/normal.png");
-    //arigatou.instance.test("http://localhost:3000/normal.png");
-    arigatou.instance.transfer("0x70997970C51812dc3A010C7d01b50e0d17dc79C8", 200)
-      .then((tx: TransactionResponse) => tx.wait())
-      .then(async () => {
-        if (!arigatou.instance) return;
-        setPointBalance(await arigatou.instance.getPointBalance());
-      })
-  }
-
   return (
     <div className="container">
       <Navbar variant="light" fixed="top" className="arigatou_navbar">
@@ -161,9 +149,6 @@ export const Arigatou: React.FC<Props> = () => {
             />{' '}
             Send a Heart
           </Navbar.Brand>
-          <Navbar.Text onClick={ nftTest }>
-            <Button variant="info text-light">NFT Test</Button>
-          </Navbar.Text>
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="text-dark me-5">Point: { String(pointBalance) } &nbsp;
               <Button variant="info text-light">Purchase</Button>
