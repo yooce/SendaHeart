@@ -14,6 +14,7 @@ import { DH_NOT_SUITABLE_GENERATOR } from "constants";
 interface Props {}
 
 interface UserContext {
+  rank: number,
   name: string,
   address: string
   receipt: number
@@ -62,13 +63,16 @@ export const Arigatou: React.FC<Props> = () => {
     users = await arigatou.instance.getUsers();
     let c_users : UserContext[] = new Array(users[0].length);
     for (let i = 0; i < users[0].length; i++ ) {
-      c_users[i] = { name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
+      c_users[i] = { rank: 0, name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
     }
     c_users.sort((a: UserContext, b: UserContext) => {
       if (a.receipt > b.receipt) return -1;
       if (a.receipt == b.receipt) return 0;
       return 1;
     })
+    for (let i = 0; i < users[0].length; i++ ) {
+      c_users[i].rank = i + 1
+    }
     setUsers(c_users);
   }
 
@@ -124,7 +128,7 @@ export const Arigatou: React.FC<Props> = () => {
     if (!arigatou.instance) return;
     if (!sendUser) return;
     setSequence(SequenceStatus.SENDING);
-    arigatou.instance.giveNft(sendUser.address, "http://localhost:3000/normal.png", 1)
+    arigatou.instance.giveNft(sendUser.address, "http://localhost:3000/normal.png", 150)
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
@@ -164,26 +168,28 @@ export const Arigatou: React.FC<Props> = () => {
             />{' '}
             Send a Heart
           </Navbar.Brand>
+          <Navbar.Collapse className="ms-5">
+            <Navbar.Text className="text-dark me-1">Community:</Navbar.Text>
+              <Dropdown>
+                <Dropdown.Toggle variant="info text-light">
+                  devillage Discord
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#/action-1">devillage Discord</Dropdown.Item>
+                  <Dropdown.Item href="#/action-2">Astar Network Discord</Dropdown.Item>
+                  <Dropdown.Item href="#/action-3">Development department</Dropdown.Item>
+                  <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-danger">{ String(totalReceipts )}</span></Navbar.Text>
+          </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text className="text-dark me-5">Point: { String(pointBalance) } &nbsp;
+            <Navbar.Text className="text-dark me-3">Point: { String(pointBalance) } &nbsp;
               <Button variant="info text-light">Purchase</Button>
             </Navbar.Text>
-            <Navbar.Text className="text-dark me-5">DIT: { String(ditBalance) } &nbsp;
+            <Navbar.Text className="text-dark me-3">DIT: { String(ditBalance) } &nbsp;
               <Button variant="info text-light" onClick={ withdraw }>Withdraw</Button>
             </Navbar.Text>
-            <Navbar.Text className="text-dark me-1">Community:</Navbar.Text>
-            <Dropdown className="me-3">
-              <Dropdown.Toggle variant="info text-light">
-                devillage Discord
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">devillage Discord</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Astar Network Discord</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Development department</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Navbar.Text className="text-dark me-5">Total receipt Pts.: { String(totalReceipts )}</Navbar.Text>
             {participated
               ? <Button variant="outline-info" className="me-3" disabled>Connected</Button>
               : <Button variant="info text-light" className="me-3" onClick={ join }>Connect</Button>
@@ -195,24 +201,29 @@ export const Arigatou: React.FC<Props> = () => {
       <Table striped bordered hover>
           <thead>
             <tr>
+              <th>Rank</th>
               <th>Name</th>
               <th>Address</th>
-              <th>Receipt</th>
-              <th>Send</th>
+              <th>Received (Pts.)</th>
+              <th>Heart</th>
             </tr>
           </thead>
           <tbody>
             {users?.map((user, index) => {
-              if (user.address != currentAddress) {
-                return (
-                  <tr key={index} v-for="user in users">
-                    <td>{user.name}</td>
-                    <td>{user.address}</td>
-                    <td>{user.receipt}</td>
-                    <td><Button variant="info text-light" onClick={() => onSelectUser(user)}>Send</Button></td>
-                  </tr>
-                )
-              }
+              return (
+                <tr key={index} v-for="user in users">
+                  <td>{user.rank}</td>
+                  <td>{user.name}</td>
+                  <td>{user.address}</td>
+                  <td>{user.receipt}</td>
+                  <td>
+                    {user.address == currentAddress
+                      ? <Button variant="outline-info" disabled>Send</Button>
+                      : <Button variant="info text-light" onClick={() => onSelectUser(user)}>Send</Button>
+                    }
+                  </td>
+                </tr>
+              )
             })}
           </tbody>
         </Table>
@@ -222,25 +233,25 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>Choose a heart! (Possession points: {String(pointBalance)})</Card.Text>
+          <Card.Text>Choose a heart! (You have {String(pointBalance)} Pts.)</Card.Text>
           <CardGroup>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
               <Card.Body>
-                <Button variant="outline-info" disabled>150 Pts.</Button>
+                <Button variant="outline-info" disabled>90 Pts.</Button>
                 <Card.Text className="text-danger small">Comming soon.</Card.Text>
               </Card.Body>
             </Card>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/normal.png" />
               <Card.Body>
-                <Button variant="info text-light" onClick={() => onSelectImage()}>300 Pts.</Button>
+                <Button variant="info text-light" onClick={() => onSelectImage()}>150 Pts.</Button>
               </Card.Body>
             </Card>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/kirakira.png" />
               <Card.Body>
-                <Button variant="outline-info" disabled>450 Pts.</Button>
+                <Button variant="outline-info" disabled>200 Pts.</Button>
                 <Card.Text className="text-danger small">Comming soon.</Card.Text>
               </Card.Body>
             </Card>
@@ -253,7 +264,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>Let's put a message!</Card.Text>
+          <Card.Text>Put your message!</Card.Text>
           <Form>
             <Form.Control type="text" value="Thank you for the last time!" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
@@ -297,10 +308,10 @@ export const Arigatou: React.FC<Props> = () => {
       </Modal>
       <Modal show={sequence == SequenceStatus.SENDING_COMPLETE} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
         <Modal.Header closeButton>
-          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
+          <Modal.Title>You have sent a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>You have got 15 DIT!</Card.Text>
+          <Card.Text>You got <span className="text-danger">15</span> DIT!</Card.Text>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="info text-light" onClick={onSendingComplete}>
