@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
-import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image } from 'react-bootstrap';
-import { BsArrowLeft } from "react-icons/bs";
+import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image, Spinner } from 'react-bootstrap';
+import { MdDone } from "react-icons/md";
 import {BigNumber} from "ethers";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
@@ -112,17 +112,20 @@ export const Arigatou: React.FC<Props> = () => {
   }
 
   const onConfirm = () => {
-    //*
     if (!arigatou.instance) return;
     if (!sendUser) return;
-    arigatou.instance.giveNft(sendUser.address, "http://localhost:3000/normal.png")
+    setSequence(SequenceStatus.SENDING);
+    arigatou.instance.giveNft(sendUser.address, "http://localhost:3000/normal.png", 1)
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
-        //setTokenAmount(await arigatou.instance.getCoinBalance());
-        setSequence(SequenceStatus.SELECT_USER);
+        setPointBalance(await arigatou.instance.getPointBalance());
+        setSequence(SequenceStatus.SENDING_COMPLETE);
       })
-    //*/
+  }
+
+  const onSendingComplete = () => {
+    setSequence(SequenceStatus.SELECT_USER);
   }
 
   const onCancelSelectImage = () => {
@@ -207,12 +210,13 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Choose a heart! (Possession points: {String(pointBalance)})</p>
+          <Card.Text>Choose a heart! (Possession points: {String(pointBalance)})</Card.Text>
           <CardGroup>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
               <Card.Body>
-                <Button variant="info text-light" onClick={() => onSelectImage()}>150 Pts.</Button>
+                <Button variant="outline-info" disabled>150 Pts.</Button>
+                <Card.Text className="text-danger small">Comming soon.</Card.Text>
               </Card.Body>
             </Card>
             <Card className="text-center">
@@ -224,7 +228,8 @@ export const Arigatou: React.FC<Props> = () => {
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/kirakira.png" />
               <Card.Body>
-                <Button variant="info text-light" onClick={() => onSelectImage()}>450 Pts.</Button>
+                <Button variant="outline-info" disabled>450 Pts.</Button>
+                <Card.Text className="text-danger small">Comming soon.</Card.Text>
               </Card.Body>
             </Card>
           </CardGroup>
@@ -236,9 +241,9 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Let's put a message!</p>
+          <Card.Text>Let's put a message!</Card.Text>
           <Form>
-            <Form.Control type="text" onChange={(e) => onChange(e.target.value)} autoFocus />
+            <Form.Control type="text" value="Thank you for the last time!" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -255,7 +260,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Would you like to send this heart?</p>
+          <Card.Text>Would you like to send this heart?</Card.Text>
           <Image className="arigatou_nft" style={{width: '50rem'}} src="/sample_nft.png"></Image>
         </Modal.Body>
         <Modal.Footer>
@@ -264,6 +269,30 @@ export const Arigatou: React.FC<Props> = () => {
           </Button>
           <Button variant="info text-light" onClick={onConfirm}>
             Send
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={sequence == SequenceStatus.SENDING} aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal.Header>
+          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Card.Text>Sending a heart...</Card.Text>
+          <div className="text-center">
+            <Spinner animation="border" role="status"></Spinner>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal show={sequence == SequenceStatus.SENDING_COMPLETE} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
+        <Modal.Header closeButton>
+          <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Card.Text>Your heart has sent.</Card.Text>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="info text-light" onClick={onSendingComplete}>
+            OK
           </Button>
         </Modal.Footer>
       </Modal>

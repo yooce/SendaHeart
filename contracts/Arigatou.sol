@@ -198,8 +198,8 @@ contract Arigatou {
      * Get own coin balance
      * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
      */
-    function getPointBalance() view public returns (uint coins) {
-        coins = users[msg.sender].points;
+    function getPointBalance() view public returns (uint) {
+        return users[msg.sender].points;
     }
 
     function getDitBalance() view public returns (uint) {
@@ -214,7 +214,11 @@ contract Arigatou {
         return sum;
     }
 
-    function giveNft(address recipient, string memory tokenURI) public {
+    function giveNft(address recipient, string memory tokenURI, uint cost) public {
+        // NFTをmint
         IGivable(nft).give(recipient, tokenURI);
+
+        // Point消費
+        users[msg.sender].points -= cost;
     }
 }
