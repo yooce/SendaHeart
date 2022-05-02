@@ -31,5 +31,7 @@ module.exports = async ({
         from: deployer,
         args: [point.address, dit.address, nft.address],
     });
+
+    await execute("DohitashimashiTokenERC20", {from: deployer}, 'increaseAllowance', arigatou.address, '100000000');
   };
   

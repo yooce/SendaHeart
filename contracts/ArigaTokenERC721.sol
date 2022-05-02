@@ -11,7 +11,7 @@ contract ArigaTokenERC721 is ERC721URIStorage, IGivable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("MyNFT", "NFT") {}
+    constructor() ERC721("ArigaToken", "HRT") {}
 
     function give(address recipient, string memory tokenURI) public override returns (uint256)
     {

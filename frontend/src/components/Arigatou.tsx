@@ -27,7 +27,8 @@ export enum SequenceStatus {
   INPUT_MESSAGE,
   CONFIRM,
   SENDING,
-  SENDING_COMPLETE
+  SENDING_COMPLETE,
+  RECEIVED
 }
 
 export const Arigatou: React.FC<Props> = () => {
@@ -50,23 +51,27 @@ export const Arigatou: React.FC<Props> = () => {
         setPointBalance(await arigatou.instance.getPointBalance());
         setDitBalance(await arigatou.instance.getDitBalance());
         setTotalReceipts(await arigatou.instance.getTotalReceipts());
-
-        let users : { 0: string[], 1: string[], 2: BigNumber[] };
-        users = await arigatou.instance.getUsers();
-        let c_users : UserContext[] = new Array(users[0].length);
-        for (let i = 0; i < users[0].length; i++ ) {
-          c_users[i] = { name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
-        }
-        c_users.sort((a: UserContext, b: UserContext) => {
-          if (a.receipt > b.receipt) return -1;
-          if (a.receipt == b.receipt) return 0;
-          return 1;
-        })
-        setUsers(c_users);
+        updateUsers();
       }
     };
     doAsync();
   }, [arigatou]);
+
+  const updateUsers = async () => {
+    if (!arigatou.instance) return;
+    let users : { 0: string[], 1: string[], 2: BigNumber[] };
+    users = await arigatou.instance.getUsers();
+    let c_users : UserContext[] = new Array(users[0].length);
+    for (let i = 0; i < users[0].length; i++ ) {
+      c_users[i] = { name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
+    }
+    c_users.sort((a: UserContext, b: UserContext) => {
+      if (a.receipt > b.receipt) return -1;
+      if (a.receipt == b.receipt) return 0;
+      return 1;
+    })
+    setUsers(c_users);
+  }
 
   const join = () => {
     if (participated) return;
@@ -119,7 +124,9 @@ export const Arigatou: React.FC<Props> = () => {
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
+        updateUsers();
         setPointBalance(await arigatou.instance.getPointBalance());
+        setTotalReceipts(await arigatou.instance.getTotalReceipts());
         setSequence(SequenceStatus.SENDING_COMPLETE);
       })
   }
@@ -138,6 +145,22 @@ export const Arigatou: React.FC<Props> = () => {
 
   const onCancelConfirm = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
+  }
+
+  const onReceive = () => {
+    if (!arigatou.instance) return;
+    setSequence(SequenceStatus.RECEIVED);
+    arigatou.instance.receiveNft()
+      .then((tx: TransactionResponse) => tx.wait())
+      .then(async () => {
+        if (!arigatou.instance) return;
+        updateUsers();
+        setDitBalance(await arigatou.instance.getDitBalance());
+      })
+  }
+
+  const onReceived = () => {
+    setSequence(SequenceStatus.SELECT_USER);
   }
 
   return (
@@ -194,7 +217,7 @@ export const Arigatou: React.FC<Props> = () => {
               if (user.address != currentAddress) {
                 return (
                   <tr key={index} v-for="user in users">
-                    <td>{user.name}</td>
+                    <td onClick={ onReceive }>{user.name}</td>
                     <td>{user.address}</td>
                     <td>{user.receipt}</td>
                     <td><Button variant="info text-light" onClick={() => onSelectUser(user)}>Send</Button></td>
@@ -292,6 +315,19 @@ export const Arigatou: React.FC<Props> = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="info text-light" onClick={onSendingComplete}>
+            OK
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={sequence == SequenceStatus.RECEIVED} aria-labelledby="contained-modal-title-vcenter" centered onHide={onCancelSelectImage}>
+        <Modal.Header closeButton>
+          <Modal.Title>You have got DIT!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Card.Text>15 DIT</Card.Text>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="info text-light" onClick={onReceived}>
             OK
           </Button>
         </Modal.Footer>

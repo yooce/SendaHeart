@@ -187,9 +187,9 @@ contract Arigatou {
      * Withdraw JunkCoin
      */
     function withdraw() public /*timeout haveCoins phaseAdvance*/ {
-        uint amount = users[msg.sender].points;
-        users[msg.sender].points = 0;
-        IERC20(point).transferFrom(admin, msg.sender, amount);
+        uint amount = users[msg.sender].dits;
+        users[msg.sender].dits = 0;
+        IERC20(dit).transferFrom(admin, msg.sender, amount);
 
         // emit Withdrew(msg.sender, amount);
     }
@@ -220,5 +220,12 @@ contract Arigatou {
 
         // Point消費
         users[msg.sender].points -= cost;
+
+        // 受領量追加
+        users[recipient].receipts += cost;
+    }
+
+    function receiveNft() public {
+        users[msg.sender].dits += 15;
     }
 }
