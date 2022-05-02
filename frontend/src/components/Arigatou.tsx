@@ -181,7 +181,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
-            <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-danger">{ String(totalReceipts )}</span></Navbar.Text>
+            <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-primary">{ String(totalReceipts )}</span></Navbar.Text>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="text-dark me-3">Point: { String(pointBalance) } &nbsp;
