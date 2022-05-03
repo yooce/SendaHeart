@@ -184,7 +184,7 @@ export const Arigatou: React.FC<Props> = () => {
             <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-primary">{ String(totalReceipts )}</span></Navbar.Text>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text className="text-dark me-3">Point: { String(pointBalance) } &nbsp;
+            <Navbar.Text className="text-dark me-3">Pts.: { String(pointBalance) } &nbsp;
               <Button variant="info text-light">Purchase</Button>
             </Navbar.Text>
             <Navbar.Text className="text-dark me-3">DIT: { String(ditBalance) } &nbsp;
@@ -266,7 +266,7 @@ export const Arigatou: React.FC<Props> = () => {
         <Modal.Body>
           <Card.Text>Put your message!</Card.Text>
           <Form>
-            <Form.Control type="text" value="Thank you for the last time!" onChange={(e) => onChange(e.target.value)} autoFocus />
+            <Form.Control type="text" value="Thank you for your kindness!" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -311,7 +311,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>You have sent a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>You got <span className="text-danger">15</span> DIT!</Card.Text>
+          <Card.Text>You have got <span className="text-danger">15</span> DIT!</Card.Text>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="info text-light" onClick={onSendingComplete}>
