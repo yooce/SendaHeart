@@ -46,6 +46,12 @@ contract Arigatou {
         setupDemo();
     }
 
+    function resetDemo() public {
+        for (uint i = 0; i < addresses.length; i++) {
+            users[addresses[i]].points = initialAmount;
+        }
+    }
+
     // デモ用セットアップ
     function setupDemo() private {
         // デモ用ユーザー名

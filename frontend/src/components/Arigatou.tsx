@@ -156,6 +156,16 @@ export const Arigatou: React.FC<Props> = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
   }
 
+  const reset = () => {
+    if (!arigatou.instance) return;
+    arigatou.instance.resetDemo()
+      .then((tx: TransactionResponse) => tx.wait())
+      .then(async () => {
+        if (!arigatou.instance) return;
+        setPointBalance(await arigatou.instance.getPointBalance());
+      });
+  }
+
   return (
     <div className="container">
       <Navbar variant="light" fixed="top" className="arigatou_navbar">
@@ -266,7 +276,7 @@ export const Arigatou: React.FC<Props> = () => {
         <Modal.Body>
           <Card.Text>Put your message!</Card.Text>
           <Form>
-            <Form.Control type="text" value="Thank you for your kindness!" onChange={(e) => onChange(e.target.value)} autoFocus />
+            <Form.Control type="text" onChange={(e) => onChange(e.target.value)} autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -319,6 +329,7 @@ export const Arigatou: React.FC<Props> = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Button variant="outline-dark" onClick={ reset }>Reset</Button>
     </div>
   );
 };
