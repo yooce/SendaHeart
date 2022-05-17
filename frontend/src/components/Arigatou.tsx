@@ -48,9 +48,9 @@ export const Arigatou: React.FC<Props> = () => {
       const c_participated = await arigatou.instance.isParticipated();
       setParticipated(c_participated);
       if (c_participated) {
-        setPointBalance(await arigatou.instance.getPointBalance());
+        setPointBalance(await arigatou.instance.getPtBalance());
         setDitBalance(await arigatou.instance.getDitBalance());
-        setTotalReceipts(await arigatou.instance.getTotalReceipts());
+        setTotalReceipts(await arigatou.instance.getTotalReceivedPts());
         updateUsers();
       }
     };
@@ -84,7 +84,7 @@ export const Arigatou: React.FC<Props> = () => {
       .then(async () => {
         if (!arigatou.instance) return;
         setParticipated(await arigatou.instance.isParticipated());
-        setPointBalance(await arigatou.instance.getPointBalance());
+        setPointBalance(await arigatou.instance.getPtBalance());
         setDitBalance(await arigatou.instance.getDitBalance());
       })
   };
@@ -93,7 +93,7 @@ export const Arigatou: React.FC<Props> = () => {
     if (!arigatou.instance) return;
     if (addr != currentAddress) return;
     setParticipated(await arigatou.instance.isParticipated());
-    setPointBalance(await arigatou.instance.getPointBalance());
+    setPointBalance(await arigatou.instance.getPtBalance());
     setDitBalance(await arigatou.instance.getDitBalance());
   }
 
@@ -133,8 +133,8 @@ export const Arigatou: React.FC<Props> = () => {
       .then(async () => {
         if (!arigatou.instance) return;
         updateUsers();
-        setPointBalance(await arigatou.instance.getPointBalance());
-        setTotalReceipts(await arigatou.instance.getTotalReceipts());
+        setPointBalance(await arigatou.instance.getPtBalance());
+        setTotalReceipts(await arigatou.instance.getTotalReceivedPts());
         setDitBalance(await arigatou.instance.getDitBalance());
         setSequence(SequenceStatus.SENDING_COMPLETE);
       })

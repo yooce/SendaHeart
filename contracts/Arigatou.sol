@@ -4,9 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./IMintable.sol";
 import "./IGivable.sol";
-import "hardhat/console.sol";
-
-pragma experimental ABIEncoderV2;
 
 contract Arigatou {
     enum UserStatus {
@@ -17,38 +14,36 @@ contract Arigatou {
     struct UserContext {
         string name;
         UserStatus status;
-        uint points;
-        uint receipts;
+        uint pts;
+        uint receivedPts;
         uint dits;
     }
 
     uint constant private initialAmount = 500;
 
+    // アドレス
     address private admin;
-    address private point;
-    address private dit;
-    address private nft;
+    address private ptAddress;
+    address private ditAddress;
+    address private nftAddress;
 
-    address[] private addresses;
-    mapping (address => UserContext) private users;
+    // ユーザー
+    address[] private userAddresses;
+    mapping (address => UserContext) private userContexts;
 
-    // 参加イベント
-    event Joined(address addr, uint index);
-
-    // コンストラクタ
-    constructor(address _point, address _dit, address _nft) {
-        point = _point;
-        dit = _dit;
-        nft = _nft;
+    constructor(address _pt, address _dit, address _nft) {
         admin = msg.sender;
+        ptAddress = _pt;
+        ditAddress = _dit;
+        nftAddress = _nft;
 
         // デモ用セットアップ
         setupDemo();
     }
 
     function resetDemo() public {
-        for (uint i = 0; i < addresses.length; i++) {
-            users[addresses[i]].points = initialAmount;
+        for (uint i = 0; i < userAddresses.length; i++) {
+            userContexts[userAddresses[i]].pts = initialAmount;
         }
     }
 
@@ -56,8 +51,8 @@ contract Arigatou {
     function setupDemo() private {
         // デモ用ユーザー名
         string[20] memory demoNames = [
-            "bottn (Me)",
-            "Mameta",
+            "User1",
+            "User2",
             "User3",
             "User4",
             "User5",
@@ -133,104 +128,80 @@ contract Arigatou {
     }
 
     // ユーザー追加
-    function addUser(string memory name, address addr, uint receipt) private {
+    function addUser(string memory name, address addr, uint received) private {
         // MINT
-        IMintable(point).mint(initialAmount);
+        IMintable(ptAddress).mint(initialAmount);
 
         // 登録
-        addresses.push(addr);
-        users[addr] = UserContext({
+        userAddresses.push(addr);
+        userContexts[addr] = UserContext({
             name: name,
             status: UserStatus.Participated,
-            points: initialAmount,
-            dits: 0,
-            receipts: receipt
+            pts: initialAmount,
+            receivedPts: received,
+            dits: 0
         });
-
-        // イベント
-        emit Joined(addr, 0);
     }
 
     function isParticipated() view public returns(bool) {
-        return users[msg.sender].status == UserStatus.Participated;
-    }
-
-    function getParticipantNum() view public returns(uint256) {
-        return addresses.length;
+        return userContexts[msg.sender].status == UserStatus.Participated;
     }
 
     function getUsers() view public returns (string[] memory, address[] memory, uint[] memory) {
-        uint length = addresses.length;
+        uint length = userAddresses.length;
         string[] memory names = new string[](length);
         address[] memory addrs = new address[](length);
         uint[] memory receipts = new uint[](length);
 
         for (uint i = 0; i < length; i++) {
-            UserContext memory user = users[addresses[i]];
+            UserContext memory user = userContexts[userAddresses[i]];
             names[i] = user.name;
-            addrs[i] = addresses[i];
-            receipts[i] = user.receipts;
+            addrs[i] = userAddresses[i];
+            receipts[i] = user.receivedPts;
         }
 
         return (names, addrs, receipts);
     }
 
-    function transfer(address opponent, uint amount) public {
-        users[msg.sender].points -= amount;
-        users[opponent].points += amount;
-    }
-
-    /**
-     * Join match queue
-     */
-    function join(string memory name) public /*timeout notParticipating phaseAdvance*/ {
-        if (users[msg.sender].status == UserStatus.NoParticipating) {
+    function join(string memory name) public {
+        if (userContexts[msg.sender].status == UserStatus.NoParticipating) {
             addUser(name, msg.sender, 0);
         }
     }
 
-    /**
-     * Withdraw JunkCoin
-     */
-    function withdraw() public /*timeout haveCoins phaseAdvance*/ {
-        uint amount = users[msg.sender].dits;
-        users[msg.sender].dits = 0;
-        IERC20(dit).transferFrom(admin, msg.sender, amount);
-
-        // emit Withdrew(msg.sender, amount);
+    function withdrawDit() public {
+        uint amount = userContexts[msg.sender].dits;
+        userContexts[msg.sender].dits = 0;
+        IERC20(ditAddress).transferFrom(admin, msg.sender, amount);
     }
     
-    /**
-     * Get own coin balance
-     * This is view function so `block.timestamp` isn't update. Obtain actual timestamp from args.
-     */
-    function getPointBalance() view public returns (uint) {
-        return users[msg.sender].points;
+    function getPtBalance() view public returns (uint) {
+        return userContexts[msg.sender].pts;
     }
 
     function getDitBalance() view public returns (uint) {
-        return users[msg.sender].dits;
+        return userContexts[msg.sender].dits;
     }
 
-    function getTotalReceipts() view public returns (uint) {
+    function getTotalReceivedPts() view public returns (uint) {
         uint sum = 0;
-        for (uint i = 0; i < addresses.length; i++) {
-            sum += users[addresses[i]].receipts;
+        for (uint i = 0; i < userAddresses.length; i++) {
+            sum += userContexts[userAddresses[i]].receivedPts;
         }
         return sum;
     }
 
     function giveNft(address recipient, string memory tokenURI, uint cost) public {
         // NFTをmint
-        IGivable(nft).give(recipient, tokenURI);
+        IGivable(nftAddress).give(recipient, tokenURI);
 
         // Point消費
-        users[msg.sender].points -= cost;
+        userContexts[msg.sender].pts -= cost;
 
         // 受領量追加
-        users[recipient].receipts += cost;
+        userContexts[recipient].receivedPts += cost;
 
         // DIT付与
-        users[msg.sender].dits += 15;
+        userContexts[msg.sender].dits += 15;
     }
 }
