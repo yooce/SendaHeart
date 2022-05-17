@@ -7,10 +7,7 @@ import "./IMintable.sol";
 contract DohitashimashiTokenERC20 is ERC20 {
     uint constant initialSupplies = 100000000;
 
-    address admin;
-
     constructor() ERC20("DohitashimashiToken", "DIT") {
-        admin = msg.sender;
         _mint(msg.sender, initialSupplies);
     }
 
