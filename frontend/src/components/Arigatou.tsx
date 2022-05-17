@@ -1,23 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ArigatouContext, CurrentAddressContext } from "./../hardhat/SymfoniContext";
-import { Navbar, Container, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image, Spinner } from 'react-bootstrap';
-import { MdDone } from "react-icons/md";
+import { Navbar, Button, Table, Modal, Form, Dropdown, Card, CardGroup, Image, Spinner } from 'react-bootstrap';
 import {BigNumber} from "ethers";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-
-import '../Arigatou.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { use } from "chai";
-import { send } from "process";
-import { DH_NOT_SUITABLE_GENERATOR } from "constants";
-
-interface Props {}
+import '../Arigatou.css';
 
 interface UserContext {
   rank: number,
   name: string,
   address: string
-  receipt: number
+  receivedPts: number
 }
 
 export enum SequenceStatus {
@@ -31,26 +24,30 @@ export enum SequenceStatus {
   SENDING_COMPLETE
 }
 
-export const Arigatou: React.FC<Props> = () => {
+export const Arigatou: React.FC = () => {
   const arigatou = useContext(ArigatouContext);
   const [currentAddress] = useContext(CurrentAddressContext);
   const [sendUser, setSendUser] = useState<UserContext>();
-  const [message, setMessage] = useState<string>('');
   const [participated, setParticipated] = useState<boolean>(false);
-  const [pointBalance, setPointBalance] = useState<BigNumber>(BigNumber.from(0));
+  const [ptBalance, setPtBalance] = useState<BigNumber>(BigNumber.from(0));
   const [ditBalance, setDitBalance] = useState<BigNumber>(BigNumber.from(0));
   const [users, setUsers] = useState<UserContext[]>();
   const [sequence, setSequence] = useState<SequenceStatus>(SequenceStatus.NOT_PARTICIPATE);
-  const [totalReceipts, setTotalReceipts] = useState<BigNumber>(BigNumber.from(0));
+  const [totalReceivedPts, setTotalReceivedPts] = useState<BigNumber>(BigNumber.from(0));
+  
   useEffect(() => {
     const doAsync = async () => {
       if (!arigatou.instance) return;
+
+      // 参加済みかどうか
       const c_participated = await arigatou.instance.isParticipated();
       setParticipated(c_participated);
+
+      // 参加済みの場合
       if (c_participated) {
-        setPointBalance(await arigatou.instance.getPtBalance());
+        setPtBalance(await arigatou.instance.getPtBalance());
         setDitBalance(await arigatou.instance.getDitBalance());
-        setTotalReceipts(await arigatou.instance.getTotalReceivedPts());
+        setTotalReceivedPts(await arigatou.instance.getTotalReceivedPts());
         updateUsers();
       }
     };
@@ -59,52 +56,41 @@ export const Arigatou: React.FC<Props> = () => {
 
   const updateUsers = async () => {
     if (!arigatou.instance) return;
+
+    // スマートコントラクトのユーザー情報取得
     let users : { 0: string[], 1: string[], 2: BigNumber[] };
     users = await arigatou.instance.getUsers();
+
+    // フロントエンド用ユーザー情報に変換
     let c_users : UserContext[] = new Array(users[0].length);
     for (let i = 0; i < users[0].length; i++ ) {
-      c_users[i] = { rank: 0, name: users[0][i], address: users[1][i], receipt: Number(users[2][i]) };
+      c_users[i] = { rank: 0, name: users[0][i], address: users[1][i], receivedPts: Number(users[2][i]) };
     }
+
+    // 受領Pts.の降順にソート
     c_users.sort((a: UserContext, b: UserContext) => {
-      if (a.receipt > b.receipt) return -1;
-      if (a.receipt == b.receipt) return 0;
+      if (a.receivedPts > b.receivedPts) return -1;
+      if (a.receivedPts == b.receivedPts) return 0;
       return 1;
     })
+
+    // 順位設定
     for (let i = 0; i < users[0].length; i++ ) {
       c_users[i].rank = i + 1
     }
+
     setUsers(c_users);
   }
 
-  const join = () => {
-    if (participated) return;
+  const withdrawDit = () => {
     if (!arigatou.instance) return;
-    arigatou.instance.join('NewUser')
+
+    arigatou.instance.withdrawDit()
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
-        setParticipated(await arigatou.instance.isParticipated());
-        setPointBalance(await arigatou.instance.getPtBalance());
         setDitBalance(await arigatou.instance.getDitBalance());
       })
-  };
-
-  const joinedHandler = async (addr: string, index: BigNumber) => {
-    if (!arigatou.instance) return;
-    if (addr != currentAddress) return;
-    setParticipated(await arigatou.instance.isParticipated());
-    setPointBalance(await arigatou.instance.getPtBalance());
-    setDitBalance(await arigatou.instance.getDitBalance());
-  }
-
-  const withdraw = () => {
-    if (!arigatou.instance) return;
-    arigatou.instance.withdraw()
-    .then((tx: TransactionResponse) => tx.wait())
-    .then(async () => {
-      if (!arigatou.instance) return;
-      setDitBalance(await arigatou.instance.getDitBalance());
-    })
   }
 
   const onSelectUser = (user: UserContext) => {
@@ -114,10 +100,6 @@ export const Arigatou: React.FC<Props> = () => {
 
   const onSelectImage = () => {
     setSequence(SequenceStatus.INPUT_MESSAGE);
-  }
-
-  const onChange = (str: string) => {
-    setMessage(str);
   }
 
   const onInputMessage = () => {
@@ -133,8 +115,8 @@ export const Arigatou: React.FC<Props> = () => {
       .then(async () => {
         if (!arigatou.instance) return;
         updateUsers();
-        setPointBalance(await arigatou.instance.getPtBalance());
-        setTotalReceipts(await arigatou.instance.getTotalReceivedPts());
+        setPtBalance(await arigatou.instance.getPtBalance());
+        setTotalReceivedPts(await arigatou.instance.getTotalReceivedPts());
         setDitBalance(await arigatou.instance.getDitBalance());
         setSequence(SequenceStatus.SENDING_COMPLETE);
       })
@@ -162,7 +144,7 @@ export const Arigatou: React.FC<Props> = () => {
       .then((tx: TransactionResponse) => tx.wait())
       .then(async () => {
         if (!arigatou.instance) return;
-        setPointBalance(await arigatou.instance.getPointBalance());
+        setPtBalance(await arigatou.instance.getPtBalance());
       });
   }
 
@@ -191,18 +173,18 @@ export const Arigatou: React.FC<Props> = () => {
                   <Dropdown.Item href="#/action-3">5th Grade, Class 1</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
-            <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-primary">{ String(totalReceipts )}</span></Navbar.Text>
+            <Navbar.Text className="text-dark ms-3">Total generated hearts (Pts.): <span className="text-primary">{ String(totalReceivedPts )}</span></Navbar.Text>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text className="text-dark me-3">Pts.: { String(pointBalance) } &nbsp;
+            <Navbar.Text className="text-dark me-3">Pts.: { String(ptBalance) } &nbsp;
               <Button variant="info text-light">Purchase</Button>
             </Navbar.Text>
             <Navbar.Text className="text-dark me-3">DIT: { String(ditBalance) } &nbsp;
-              <Button variant="info text-light" onClick={ withdraw }>Withdraw</Button>
+              <Button variant="info text-light" onClick={ withdrawDit }>Withdraw</Button>
             </Navbar.Text>
             {participated
               ? <Button variant="outline-info" className="me-3" disabled>Connected</Button>
-              : <Button variant="info text-light" className="me-3" onClick={ join }>Connect</Button>
+              : <Button variant="info text-light" className="me-3">Connect</Button>
             }
         </Navbar.Collapse>
       </Navbar>
@@ -225,7 +207,7 @@ export const Arigatou: React.FC<Props> = () => {
                   <td>{user.rank}</td>
                   <td>{user.name}</td>
                   <td>{user.address}</td>
-                  <td>{user.receipt}</td>
+                  <td>{user.receivedPts}</td>
                   <td>
                     {user.address == currentAddress
                       ? <Button variant="outline-info" disabled>Send</Button>
@@ -243,7 +225,7 @@ export const Arigatou: React.FC<Props> = () => {
           <Modal.Title>Send a heart to {sendUser?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Card.Text>Choose a heart! (You have {String(pointBalance)} Pts.)</Card.Text>
+          <Card.Text>Choose a heart! (You have {String(ptBalance)} Pts.)</Card.Text>
           <CardGroup>
             <Card className="text-center">
               <Card.Img variant="top"  style={{ width: '90%' }} className="arigatou_card mt-3" src="/green.png" />
@@ -276,7 +258,7 @@ export const Arigatou: React.FC<Props> = () => {
         <Modal.Body>
           <Card.Text>Put your message!</Card.Text>
           <Form>
-            <Form.Control type="text" onChange={(e) => onChange(e.target.value)} autoFocus />
+            <Form.Control type="text" autoFocus />
           </Form>
         </Modal.Body>
         <Modal.Footer>

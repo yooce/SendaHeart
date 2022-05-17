@@ -163,12 +163,6 @@ contract Arigatou {
         return (names, addrs, receipts);
     }
 
-    function join(string memory name) public {
-        if (userContexts[msg.sender].status == UserStatus.NoParticipating) {
-            addUser(name, msg.sender, 0);
-        }
-    }
-
     function withdrawDit() public {
         uint amount = userContexts[msg.sender].dits;
         userContexts[msg.sender].dits = 0;

@@ -2888,13 +2888,6 @@
   "resolved" "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.1.0.tgz"
   "version" "2.1.0"
 
-"bindings@^1.5.0":
-  "integrity" "sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ=="
-  "resolved" "https://registry.npmjs.org/bindings/-/bindings-1.5.0.tgz"
-  "version" "1.5.0"
-  dependencies:
-    "file-uri-to-path" "1.0.0"
-
 "bluebird@^3.5.5":
   "integrity" "sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg=="
   "resolved" "https://registry.npmjs.org/bluebird/-/bluebird-3.7.2.tgz"
@@ -5429,19 +5422,6 @@
   "resolved" "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
 
-"fsevents@^1.2.7":
-  "integrity" "sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw=="
-  "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-1.2.13.tgz"
-  "version" "1.2.13"
-  dependencies:
-    "bindings" "^1.5.0"
-    "nan" "^2.12.1"
-
-"fsevents@~2.1.2", "fsevents@2.1.2":
-  "integrity" "sha512-R4wDiBwZ0KzpgOWetKDug1FZcYhqYnUYKtfZYt4mD5SBz76q0KR4Q9o7GIPamsVPGmW3EYPPJ0dOOjvx32ldZA=="
-  "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-2.1.2.tgz"
-  "version" "2.1.2"
-
 "function-bind@^1.1.1":
   "integrity" "sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A=="
   "resolved" "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz"
@@ -7583,11 +7563,6 @@
   "resolved" "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz"
   "version" "0.0.8"
 
-"nan@^2.12.1":
-  "integrity" "sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ=="
-  "resolved" "https://registry.npmjs.org/nan/-/nan-2.14.2.tgz"
-  "version" "2.14.2"
-
 "nanomatch@^1.2.9":
   "integrity" "sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA=="
   "resolved" "https://registry.npmjs.org/nanomatch/-/nanomatch-1.2.13.tgz"
@@ -9310,11 +9285,6 @@
   "integrity" "sha512-HvPuUQnLp5H7TouGq3kzBeioJmXms1wHy9EGjz2OURWBp4qZO6AfGEcnxts1D/CbwPLRAgTMPCEgYhA3sEM4vw=="
   "resolved" "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.8.tgz"
   "version" "6.0.8"
-
-"react-icons@^4.3.1":
-  "integrity" "sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ=="
-  "resolved" "https://registry.npmjs.org/react-icons/-/react-icons-4.3.1.tgz"
-  "version" "4.3.1"
 
 "react-is@^16.12.0", "react-is@^16.13.1", "react-is@^16.3.2", "react-is@^16.7.0", "react-is@^16.8.4", "react-is@>= 16.8.0":
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
